@@ -1,0 +1,2 @@
+- [INSURE-X storage adapter](insurex-storage.md) — the runnable environment provides PostgreSQL/Drizzle but no MongoDB connection; preserve the domain model and document the adapter until a real Mongo URI exists.
+- [INSURE-X contract workflow](insurex-contract.md) — keep OpenAPI as the source of truth and regenerate typed clients/Zod schemas after contract changes.

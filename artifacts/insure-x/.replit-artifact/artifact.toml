@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "INSURE-X Insurance Intelligence"
+description = "A MongoDB-backed insurance operations platform for customer, policy, asset, claim, risk, fraud, investigation, settlement, payment, audit, and analytics workflows."
+version = "1.0.0"
+id = "artifacts/insure-x"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 19941
+
+[services.development]
+run = "pnpm --filter @workspace/insure-x run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/insure-x", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/insure-x/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "19941"
+BASE_PATH = "/"

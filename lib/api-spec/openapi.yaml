@@ -3,20 +3,29 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: INSURE-X insurance operations and risk intelligence API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
-    description: Health operations
+  - name: auth
+  - name: dashboard
+  - name: customers
+  - name: policies
+  - name: assets
+  - name: claims
+  - name: investigations
+  - name: fraud
+  - name: payments
+  - name: reports
+  - name: audit
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,13 +33,991 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      summary: Sign in an operations user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginInput"
+      responses:
+        "200":
+          description: Authenticated user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthSession"
+        "401":
+          description: Invalid credentials
+  /auth/profile:
+    get:
+      operationId: getProfile
+      tags: [auth]
+      summary: Get the current operator profile
+      responses:
+        "200":
+          description: Current profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/User"
+  /dashboard/summary:
+    get:
+      operationId: getDashboardSummary
+      tags: [dashboard]
+      summary: Get live operations KPIs and chart series
+      responses:
+        "200":
+          description: Dashboard summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardSummary"
+  /customers:
+    get:
+      operationId: listCustomers
+      tags: [customers]
+      summary: Search and paginate customers
+      parameters:
+        - $ref: "#/components/parameters/Search"
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - name: status
+          in: query
+          schema:
+            $ref: "#/components/schemas/CustomerStatus"
+        - $ref: "#/components/parameters/Sort"
+      responses:
+        "200":
+          description: Customer page
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CustomerPage"
+    post:
+      operationId: createCustomer
+      tags: [customers]
+      summary: Create a customer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CustomerInput"
+      responses:
+        "201":
+          description: Customer created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Customer"
+  /customers/{id}:
+    get:
+      operationId: getCustomer
+      tags: [customers]
+      summary: Get a customer
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "200":
+          description: Customer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Customer"
+    patch:
+      operationId: updateCustomer
+      tags: [customers]
+      summary: Update a customer
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CustomerUpdate"
+      responses:
+        "200":
+          description: Updated customer
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Customer"
+  /policies:
+    get:
+      operationId: listPolicies
+      tags: [policies]
+      summary: Search and paginate policies
+      parameters:
+        - $ref: "#/components/parameters/Search"
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - name: status
+          in: query
+          schema:
+            $ref: "#/components/schemas/PolicyStatus"
+        - name: policyType
+          in: query
+          schema:
+            type: string
+        - $ref: "#/components/parameters/Sort"
+      responses:
+        "200":
+          description: Policy page
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PolicyPage"
+    post:
+      operationId: createPolicy
+      tags: [policies]
+      summary: Create a policy
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/PolicyInput"
+      responses:
+        "201":
+          description: Policy created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Policy"
+  /assets:
+    get:
+      operationId: listAssets
+      tags: [assets]
+      summary: Search and paginate insured assets
+      parameters:
+        - $ref: "#/components/parameters/Search"
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - name: assetType
+          in: query
+          schema:
+            type: string
+        - $ref: "#/components/parameters/Sort"
+      responses:
+        "200":
+          description: Asset page
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AssetPage"
+    post:
+      operationId: createAsset
+      tags: [assets]
+      summary: Register an insured asset
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AssetInput"
+      responses:
+        "201":
+          description: Asset created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Asset"
+  /claims:
+    get:
+      operationId: listClaims
+      tags: [claims]
+      summary: Search and paginate claims
+      parameters:
+        - $ref: "#/components/parameters/Search"
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - name: status
+          in: query
+          schema:
+            $ref: "#/components/schemas/ClaimStatus"
+        - name: riskLevel
+          in: query
+          schema:
+            $ref: "#/components/schemas/RiskLevel"
+        - name: policyType
+          in: query
+          schema:
+            type: string
+        - name: region
+          in: query
+          schema:
+            type: string
+        - $ref: "#/components/parameters/Sort"
+      responses:
+        "200":
+          description: Claim page
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ClaimPage"
+    post:
+      operationId: createClaim
+      tags: [claims]
+      summary: Submit a claim
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ClaimInput"
+      responses:
+        "201":
+          description: Claim submitted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Claim"
+  /claims/{id}:
+    get:
+      operationId: getClaim
+      tags: [claims]
+      summary: Get a claim with its related workflow data
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "200":
+          description: Claim detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ClaimDetail"
+  /claims/{id}/status:
+    patch:
+      operationId: updateClaimStatus
+      tags: [claims]
+      summary: Move a claim through a controlled lifecycle transition
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ClaimStatusUpdate"
+      responses:
+        "200":
+          description: Updated claim
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Claim"
+  /claims/{id}/risk:
+    post:
+      operationId: calculateClaimRisk
+      tags: [claims]
+      summary: Calculate explainable prototype rule-based risk indicators
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "200":
+          description: Risk result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RiskProfile"
+  /claims/{id}/settle:
+    post:
+      operationId: settleClaim
+      tags: [claims]
+      summary: Atomically settle a claim and create payment evidence
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SettlementInput"
+      responses:
+        "200":
+          description: Settlement result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SettlementResult"
+  /claim-events/{claimId}:
+    get:
+      operationId: listClaimEvents
+      tags: [claims]
+      summary: Get a claim timeline
+      parameters:
+        - $ref: "#/components/parameters/ClaimId"
+      responses:
+        "200":
+          description: Timeline events
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ClaimEvent"
+  /investigations:
+    get:
+      operationId: listInvestigations
+      tags: [investigations]
+      summary: Search investigations
+      parameters:
+        - $ref: "#/components/parameters/Search"
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - name: status
+          in: query
+          schema:
+            $ref: "#/components/schemas/InvestigationStatus"
+      responses:
+        "200":
+          description: Investigation page
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InvestigationPage"
+    post:
+      operationId: createInvestigation
+      tags: [investigations]
+      summary: Assign an investigator
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InvestigationInput"
+      responses:
+        "201":
+          description: Investigation created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Investigation"
+  /fraud-alerts:
+    get:
+      operationId: listFraudAlerts
+      tags: [fraud]
+      summary: Search fraud alerts
+      parameters:
+        - $ref: "#/components/parameters/Search"
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - name: severity
+          in: query
+          schema:
+            $ref: "#/components/schemas/RiskLevel"
+        - name: status
+          in: query
+          schema:
+            $ref: "#/components/schemas/FraudAlertStatus"
+      responses:
+        "200":
+          description: Fraud alert page
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FraudAlertPage"
+  /fraud-alerts/{id}:
+    patch:
+      operationId: updateFraudAlert
+      tags: [fraud]
+      summary: Resolve or dismiss a fraud alert
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/FraudAlertUpdate"
+      responses:
+        "200":
+          description: Updated alert
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FraudAlert"
+  /payments:
+    get:
+      operationId: listPayments
+      tags: [payments]
+      summary: Search payments
+      parameters:
+        - $ref: "#/components/parameters/Search"
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - name: status
+          in: query
+          schema:
+            $ref: "#/components/schemas/PaymentStatus"
+      responses:
+        "200":
+          description: Payment page
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PaymentPage"
+  /reports/claims-by-month:
+    get:
+      operationId: getClaimsByMonth
+      tags: [reports]
+      summary: Monthly claim volume and value
+      responses:
+        "200":
+          description: Monthly claim series
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MonthlyMetric"
+  /reports/risk-distribution:
+    get:
+      operationId: getRiskDistribution
+      tags: [reports]
+      summary: Risk level distribution
+      responses:
+        "200":
+          description: Risk distribution
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/GroupedMetric"
+  /reports/settlements:
+    get:
+      operationId: getSettlementReport
+      tags: [reports]
+      summary: Monthly settlement totals
+      responses:
+        "200":
+          description: Settlement series
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/MonthlyMetric"
+  /reports/investigator-workload:
+    get:
+      operationId: getInvestigatorWorkload
+      tags: [reports]
+      summary: Workload by investigator
+      responses:
+        "200":
+          description: Investigator workload
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/GroupedMetric"
+  /audit-logs:
+    get:
+      operationId: listAuditLogs
+      tags: [audit]
+      summary: Search the audit trail
+      parameters:
+        - $ref: "#/components/parameters/Search"
+        - $ref: "#/components/parameters/Page"
+        - $ref: "#/components/parameters/PageSize"
+        - name: action
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Audit log page
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuditLogPage"
 components:
+  parameters:
+    Id:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: string
+    ClaimId:
+      name: claimId
+      in: path
+      required: true
+      schema:
+        type: string
+    Search:
+      name: search
+      in: query
+      schema:
+        type: string
+    Page:
+      name: page
+      in: query
+      schema:
+        type: number
+        minimum: 1
+        default: 1
+    PageSize:
+      name: pageSize
+      in: query
+      schema:
+        type: number
+        minimum: 1
+        maximum: 100
+        default: 20
+    Sort:
+      name: sort
+      in: query
+      schema:
+        type: string
+        default: "-createdAt"
   schemas:
     HealthStatus:
       type: object
       properties:
         status:
           type: string
-      required:
-        - status
-
+      required: [status]
+    LoginInput:
+      type: object
+      properties:
+        email:
+          type: string
+        password:
+          type: string
+          minLength: 8
+      required: [email, password]
+    AuthSession:
+      type: object
+      properties:
+        token:
+          type: string
+        user:
+          $ref: "#/components/schemas/User"
+      required: [token, user]
+    User:
+      type: object
+      properties:
+        id: { type: string }
+        name: { type: string }
+        email: { type: string }
+        role:
+          $ref: "#/components/schemas/UserRole"
+        initials: { type: string }
+      required: [id, name, email, role, initials]
+    UserRole:
+      type: string
+      enum: [ADMIN, AGENT, CUSTOMER, INVESTIGATOR, FINANCE]
+    CustomerStatus:
+      type: string
+      enum: [ACTIVE, INACTIVE]
+    Customer:
+      type: object
+      properties:
+        id: { type: string }
+        name: { type: string }
+        email: { type: string }
+        phone: { type: string }
+        region: { type: string }
+        status:
+          $ref: "#/components/schemas/CustomerStatus"
+        policyCount: { type: number }
+        claimCount: { type: number }
+        createdAt: { type: string, format: date-time }
+      required: [id, name, email, phone, region, status, policyCount, claimCount, createdAt]
+    CustomerInput:
+      type: object
+      properties:
+        name: { type: string, minLength: 2 }
+        email: { type: string }
+        phone: { type: string, minLength: 7 }
+        region: { type: string, minLength: 2 }
+      required: [name, email, phone, region]
+    CustomerUpdate:
+      type: object
+      properties:
+        name: { type: string, minLength: 2 }
+        phone: { type: string, minLength: 7 }
+        region: { type: string, minLength: 2 }
+        status:
+          $ref: "#/components/schemas/CustomerStatus"
+    CustomerPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items: { $ref: "#/components/schemas/Customer" }
+        page: { type: number }
+        pageSize: { type: number }
+        total: { type: number }
+      required: [items, page, pageSize, total]
+    PolicyStatus:
+      type: string
+      enum: [ACTIVE, EXPIRED, CANCELLED, PENDING]
+    Policy:
+      type: object
+      properties:
+        id: { type: string }
+        policyNumber: { type: string }
+        customerId: { type: string }
+        customerName: { type: string }
+        policyType: { type: string }
+        premium: { type: number }
+        coverageAmount: { type: number }
+        startDate: { type: string, format: date }
+        endDate: { type: string, format: date }
+        status:
+          $ref: "#/components/schemas/PolicyStatus"
+      required: [id, policyNumber, customerId, customerName, policyType, premium, coverageAmount, startDate, endDate, status]
+    PolicyInput:
+      type: object
+      properties:
+        policyNumber: { type: string, minLength: 3 }
+        customerId: { type: string }
+        policyType: { type: string }
+        premium: { type: number, minimum: 0 }
+        coverageAmount: { type: number, minimum: 0 }
+        startDate: { type: string, format: date }
+        endDate: { type: string, format: date }
+      required: [policyNumber, customerId, policyType, premium, coverageAmount, startDate, endDate]
+    PolicyPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items: { $ref: "#/components/schemas/Policy" }
+        page: { type: number }
+        pageSize: { type: number }
+        total: { type: number }
+      required: [items, page, pageSize, total]
+    Asset:
+      type: object
+      properties:
+        id: { type: string }
+        policyId: { type: string }
+        customerName: { type: string }
+        assetType: { type: string }
+        description: { type: string }
+        identifier: { type: string }
+        value: { type: number }
+      required: [id, policyId, customerName, assetType, description, identifier, value]
+    AssetInput:
+      type: object
+      properties:
+        policyId: { type: string }
+        assetType: { type: string }
+        description: { type: string }
+        identifier: { type: string }
+        value: { type: number, minimum: 0 }
+      required: [policyId, assetType, description, identifier, value]
+    AssetPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items: { $ref: "#/components/schemas/Asset" }
+        page: { type: number }
+        pageSize: { type: number }
+        total: { type: number }
+      required: [items, page, pageSize, total]
+    ClaimStatus:
+      type: string
+      enum: [SUBMITTED, UNDER_REVIEW, INVESTIGATION, APPROVED, REJECTED, SETTLED]
+    RiskLevel:
+      type: string
+      enum: [LOW, MEDIUM, HIGH, CRITICAL]
+    Claim:
+      type: object
+      properties:
+        id: { type: string }
+        claimNumber: { type: string }
+        customerId: { type: string }
+        customerName: { type: string }
+        policyId: { type: string }
+        policyNumber: { type: string }
+        policyType: { type: string }
+        region: { type: string }
+        claimType: { type: string }
+        claimAmount: { type: number }
+        claimDate: { type: string, format: date }
+        status:
+          $ref: "#/components/schemas/ClaimStatus"
+        riskScore: { type: number }
+        riskLevel:
+          $ref: "#/components/schemas/RiskLevel"
+        createdAt: { type: string, format: date-time }
+      required: [id, claimNumber, customerId, customerName, policyId, policyNumber, policyType, region, claimType, claimAmount, claimDate, status, riskScore, riskLevel, createdAt]
+    ClaimInput:
+      type: object
+      properties:
+        claimNumber: { type: string, minLength: 3 }
+        customerId: { type: string }
+        policyId: { type: string }
+        assetId: { type: string }
+        claimType: { type: string }
+        claimAmount: { type: number, minimum: 0 }
+        claimDate: { type: string, format: date }
+        description: { type: string, minLength: 10 }
+      required: [claimNumber, customerId, policyId, claimType, claimAmount, claimDate, description]
+    ClaimPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items: { $ref: "#/components/schemas/Claim" }
+        page: { type: number }
+        pageSize: { type: number }
+        total: { type: number }
+      required: [items, page, pageSize, total]
+    ClaimStatusUpdate:
+      type: object
+      properties:
+        status:
+          $ref: "#/components/schemas/ClaimStatus"
+        note: { type: string }
+      required: [status]
+    ClaimDetail:
+      allOf:
+        - $ref: "#/components/schemas/Claim"
+        - type: object
+          properties:
+            description: { type: string }
+            assetDescription: { type: string }
+            riskFactors:
+              type: array
+              items: { type: string }
+            fraudAlerts:
+              type: array
+              items: { $ref: "#/components/schemas/FraudAlert" }
+            documents:
+              type: array
+              items: { $ref: "#/components/schemas/Document" }
+            investigation:
+              oneOf:
+                - $ref: "#/components/schemas/Investigation"
+                - type: "null"
+            events:
+              type: array
+              items: { $ref: "#/components/schemas/ClaimEvent" }
+            payment:
+              oneOf:
+                - $ref: "#/components/schemas/Payment"
+                - type: "null"
+    ClaimEvent:
+      type: object
+      properties:
+        id: { type: string }
+        claimId: { type: string }
+        eventType: { type: string }
+        description: { type: string }
+        actingUser: { type: string }
+        timestamp: { type: string, format: date-time }
+      required: [id, claimId, eventType, description, actingUser, timestamp]
+    Document:
+      type: object
+      properties:
+        id: { type: string }
+        claimId: { type: string }
+        documentType: { type: string }
+        fileName: { type: string }
+        verificationStatus: { type: string, enum: [PENDING, VERIFIED, REJECTED] }
+        uploadedAt: { type: string, format: date-time }
+        verifiedBy: { type: string }
+      required: [id, claimId, documentType, fileName, verificationStatus, uploadedAt, verifiedBy]
+    RiskProfile:
+      type: object
+      properties:
+        claimId: { type: string }
+        score: { type: number, minimum: 0, maximum: 100 }
+        level:
+          $ref: "#/components/schemas/RiskLevel"
+        factors:
+          type: array
+          items: { type: string }
+        calculatedAt: { type: string, format: date-time }
+      required: [claimId, score, level, factors, calculatedAt]
+    FraudAlertStatus:
+      type: string
+      enum: [OPEN, UNDER_REVIEW, RESOLVED, DISMISSED]
+    FraudAlert:
+      type: object
+      properties:
+        id: { type: string }
+        claimId: { type: string }
+        claimNumber: { type: string }
+        riskScore: { type: number }
+        severity:
+          $ref: "#/components/schemas/RiskLevel"
+        factors:
+          type: array
+          items: { type: string }
+        status:
+          $ref: "#/components/schemas/FraudAlertStatus"
+        assignedInvestigator: { type: string }
+        createdAt: { type: string, format: date-time }
+        resolution: { type: string }
+      required: [id, claimId, claimNumber, riskScore, severity, factors, status, assignedInvestigator, createdAt, resolution]
+    FraudAlertUpdate:
+      type: object
+      properties:
+        status:
+          $ref: "#/components/schemas/FraudAlertStatus"
+        resolution: { type: string }
+        assignedInvestigator: { type: string }
+    FraudAlertPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items: { $ref: "#/components/schemas/FraudAlert" }
+        page: { type: number }
+        pageSize: { type: number }
+        total: { type: number }
+      required: [items, page, pageSize, total]
+    InvestigationStatus:
+      type: string
+      enum: [ASSIGNED, IN_PROGRESS, COMPLETED]
+    Investigation:
+      type: object
+      properties:
+        id: { type: string }
+        claimId: { type: string }
+        claimNumber: { type: string }
+        investigatorId: { type: string }
+        investigatorName: { type: string }
+        status:
+          $ref: "#/components/schemas/InvestigationStatus"
+        notes: { type: string }
+        findings: { type: string }
+        recommendation: { type: string }
+        assignedAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+      required: [id, claimId, claimNumber, investigatorId, investigatorName, status, notes, findings, recommendation, assignedAt, updatedAt]
+    InvestigationInput:
+      type: object
+      properties:
+        claimId: { type: string }
+        investigatorId: { type: string }
+        notes: { type: string }
+      required: [claimId, investigatorId]
+    InvestigationPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items: { $ref: "#/components/schemas/Investigation" }
+        page: { type: number }
+        pageSize: { type: number }
+        total: { type: number }
+      required: [items, page, pageSize, total]
+    PaymentStatus:
+      type: string
+      enum: [PENDING, PROCESSING, PAID, FAILED]
+    Payment:
+      type: object
+      properties:
+        id: { type: string }
+        claimId: { type: string }
+        claimNumber: { type: string }
+        amount: { type: number }
+        method: { type: string }
+        status:
+          $ref: "#/components/schemas/PaymentStatus"
+        paymentDate: { type: string, format: date-time }
+      required: [id, claimId, claimNumber, amount, method, status, paymentDate]
+    SettlementInput:
+      type: object
+      properties:
+        amount: { type: number, minimum: 0 }
+        method: { type: string }
+      required: [amount, method]
+    SettlementResult:
+      type: object
+      properties:
+        claim:
+          $ref: "#/components/schemas/Claim"
+        payment:
+          $ref: "#/components/schemas/Payment"
+        event:
+          $ref: "#/components/schemas/ClaimEvent"
+      required: [claim, payment, event]
+    PaymentPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items: { $ref: "#/components/schemas/Payment" }
+        page: { type: number }
+        pageSize: { type: number }
+        total: { type: number }
+      required: [items, page, pageSize, total]
+    MonthlyMetric:
+      type: object
+      properties:
+        label: { type: string }
+        count: { type: number }
+        amount: { type: number }
+      required: [label, count, amount]
+    GroupedMetric:
+      type: object
+      properties:
+        label: { type: string }
+        value: { type: number }
+      required: [label, value]
+    DashboardSummary:
+      type: object
+      properties:
+        kpis:
+          type: object
+          properties:
+            activePolicies: { type: number }
+            totalClaims: { type: number }
+            pendingClaims: { type: number }
+            approvedClaims: { type: number }
+            rejectedClaims: { type: number }
+            highRiskClaims: { type: number }
+            totalSettlements: { type: number }
+            openInvestigations: { type: number }
+          required: [activePolicies, totalClaims, pendingClaims, approvedClaims, rejectedClaims, highRiskClaims, totalSettlements, openInvestigations]
+        claimsByMonth:
+          type: array
+          items: { $ref: "#/components/schemas/MonthlyMetric" }
+        riskDistribution:
+          type: array
+          items: { $ref: "#/components/schemas/GroupedMetric" }
+        claimStatusDistribution:
+          type: array
+          items: { $ref: "#/components/schemas/GroupedMetric" }
+        recentActivity:
+          type: array
+          items: { $ref: "#/components/schemas/ClaimEvent" }
+      required: [kpis, claimsByMonth, riskDistribution, claimStatusDistribution, recentActivity]
+    AuditLog:
+      type: object
+      properties:
+        id: { type: string }
+        action: { type: string }
+        entityType: { type: string }
+        entityId: { type: string }
+        actingUser: { type: string }
+        timestamp: { type: string, format: date-time }
+        metadata: { type: string }
+      required: [id, action, entityType, entityId, actingUser, timestamp, metadata]
+    AuditLogPage:
+      type: object
+      properties:
+        items:
+          type: array
+          items: { $ref: "#/components/schemas/AuditLog" }
+        page: { type: number }
+        pageSize: { type: number }
+        total: { type: number }
+      required: [items, page, pageSize, total]
