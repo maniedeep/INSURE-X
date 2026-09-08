@@ -1,5 +1,7 @@
 # Delivery audit
 
+Last audited: September 8, 2026
+
 ## Delivered
 
 - OpenAPI-first API contract and generated React/Zod clients.
@@ -10,6 +12,7 @@
 - Atomic settlement workflow.
 - Responsive React operations console with loading/error/empty states.
 - Requirement matrix, data dictionary, architecture notes, and Mermaid ERD source.
+- Full workspace build, authenticated endpoint matrix, invalid-login, invalid-transition, and pre-approval settlement checks.
 
 ## Known gaps
 
@@ -18,3 +21,7 @@
 3. Document and service-provider mutation screens are not yet exposed, although the core tables and claim-detail document display are present.
 4. Formal Jest/Vitest integration tests and captured explain plans remain to be added; no performance numbers are claimed here.
 5. The requested 20 analytical queries are represented by the dashboard/report query family, not yet delivered as a separately catalogued query pack.
+
+## Current verification result
+
+The workspace-wide `pnpm run build` passes for all checked packages, including the API server, INSURE-X web artifact, mockup sandbox, and scripts. All three configured workflows are running. Desktop and mobile login views render without layout errors; the browser console is clean apart from standard React DevTools output.

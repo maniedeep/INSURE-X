@@ -1,11 +1,14 @@
 # INSURE-X verification plan
 
+Last verified: September 8, 2026
+
 ## Automated checks completed
 
 - API TypeScript check: `pnpm --filter @workspace/api-server run typecheck`
 - Web TypeScript check: `pnpm --filter @workspace/insure-x run typecheck`
 - Web production bundle: `pnpm --filter @workspace/insure-x run build`
 - Shared generated-library check: `pnpm run typecheck:libs`
+- Workspace-wide build: `pnpm run build`
 
 ## Runtime checks completed
 
@@ -16,6 +19,9 @@
 - Risk recalculation returns score, level, factors, and timestamp.
 - Investigation list returns joined investigator and claim context.
 - Mobile claims view renders without horizontal page overflow.
+- Unauthenticated protected requests return `401`; invalid credentials return `401`.
+- Invalid claim transitions and settlement-before-approval return `400`.
+- Desktop and mobile login previews render successfully.
 
 ## Required follow-up tests
 

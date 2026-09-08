@@ -316,7 +316,7 @@ paths:
     post:
       operationId: calculateClaimRisk
       tags: [claims]
-      summary: Calculate explainable prototype rule-based risk indicators
+      summary: Calculate explainable rule-based risk indicators
       parameters:
         - $ref: "#/components/parameters/Id"
       responses:

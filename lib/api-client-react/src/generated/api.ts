@@ -1320,7 +1320,7 @@ export const getCalculateClaimRiskUrl = (id: string,) => {
 }
 
 /**
- * @summary Calculate explainable prototype rule-based risk indicators
+ * @summary Calculate explainable rule-based risk indicators
  */
 export const calculateClaimRisk = async (id: string, options?: Parameters<typeof customFetch>[1]): Promise<RiskProfile> => {
 
@@ -1369,7 +1369,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type CalculateClaimRiskMutationError = ErrorType<unknown>
 
     /**
- * @summary Calculate explainable prototype rule-based risk indicators
+ * @summary Calculate explainable rule-based risk indicators
  */
 export const useCalculateClaimRisk = <TError = ErrorType<unknown>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof calculateClaimRisk>>, TError,{id: string}, TContext>, request?: SecondParameter<typeof customFetch>}

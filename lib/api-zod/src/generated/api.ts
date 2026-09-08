@@ -544,7 +544,7 @@ export const UpdateClaimStatusResponse = zod.object({
 
 
 /**
- * @summary Calculate explainable prototype rule-based risk indicators
+ * @summary Calculate explainable rule-based risk indicators
  */
 export const CalculateClaimRiskParams = zod.object({
   "id": zod.coerce.string()

@@ -503,10 +503,10 @@ router.post("/claims/:id/risk", requireRoles("ADMIN", "AGENT", "INVESTIGATOR"), 
     const [existing] = await db.select().from(fraudAlerts).where(and(eq(fraudAlerts.claimId, claim.id), sql`${fraudAlerts.status} in ('OPEN', 'UNDER_REVIEW')`)).limit(1);
     if (!existing) {
       await db.insert(fraudAlerts).values({ claimId: claim.id, riskScore: score, severity: level, factors: JSON.stringify(factors) });
-      await db.insert(claimEvents).values({ claimId: claim.id, eventType: "FRAUD_ALERT_CREATED", description: "A fraud alert was created from prototype risk indicators.", actingUser: "Aarav Mehta" });
+      await db.insert(claimEvents).values({ claimId: claim.id, eventType: "FRAUD_ALERT_CREATED", description: "A fraud alert was created from explainable risk indicators.", actingUser: "Aarav Mehta" });
     }
   }
-  await db.insert(claimEvents).values({ claimId: claim.id, eventType: "RISK_CALCULATED", description: `Prototype risk score calculated at ${score}/100 (${level}).`, actingUser: "Aarav Mehta" });
+  await db.insert(claimEvents).values({ claimId: claim.id, eventType: "RISK_CALCULATED", description: `Explainable risk score calculated at ${score}/100 (${level}).`, actingUser: "Aarav Mehta" });
   await writeAudit("UPDATE_RISK", "CLAIM", claim.id, { score, level, factors });
   res.json({ claimId: claim.id, score: risk.score, level: risk.level, factors, calculatedAt: risk.calculatedAt });
 });
