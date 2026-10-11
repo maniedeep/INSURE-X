@@ -18,13 +18,19 @@ import {
   getListCustomersQueryKey, getListPoliciesQueryKey, getListAssetsQueryKey, getListClaimsQueryKey,
   getGetClaimQueryKey, getListInvestigationsQueryKey, getListFraudAlertsQueryKey,
   getListPaymentsQueryKey, getListAuditLogsQueryKey,
-  setAuthTokenGetter,
+  setAuthTokenGetter, setUnauthorizedHandler,
   type ClaimStatus, type FraudAlertStatus
 } from '@workspace/api-client-react';
 import NotFound from '@/pages/not-found';
 
 const queryClient = new QueryClient();
 setAuthTokenGetter(() => localStorage.getItem('insurex_token'));
+const appBasePath = import.meta.env.BASE_URL.replace(/\/$/, '');
+setUnauthorizedHandler(() => {
+  localStorage.removeItem('insurex_token');
+  queryClient.clear();
+  window.location.replace(`${appBasePath}/login`);
+});
 const nav = [
   { label: 'Command center', href: '/', icon: LayoutDashboard },
   { label: 'Customers', href: '/customers', icon: Users },
