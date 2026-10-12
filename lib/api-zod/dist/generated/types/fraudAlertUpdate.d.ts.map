@@ -1,0 +1,1 @@
+{"version":3,"file":"fraudAlertUpdate.d.ts","sourceRoot":"","sources":["../../../src/generated/types/fraudAlertUpdate.ts"],"names":[],"mappings":"AAAA;;;;;;GAMG;AACH,OAAO,KAAK,EAAE,gBAAgB,EAAE,MAAM,oBAAoB,CAAC;AAE3D,MAAM,WAAW,gBAAgB;IAC/B,MAAM,CAAC,EAAE,gBAAgB,CAAC;IAC1B,UAAU,CAAC,EAAE,MAAM,CAAC;IACpB,oBAAoB,CAAC,EAAE,MAAM,CAAC;CAC/B"}

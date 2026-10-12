@@ -1,0 +1,1 @@
+{"version":3,"file":"riskProfile.d.ts","sourceRoot":"","sources":["../../../src/generated/types/riskProfile.ts"],"names":[],"mappings":"AAAA;;;;;;GAMG;AACH,OAAO,KAAK,EAAE,SAAS,EAAE,MAAM,aAAa,CAAC;AAE7C,MAAM,WAAW,WAAW;IAC1B,OAAO,EAAE,MAAM,CAAC;IAChB;;;SAGK;IACL,KAAK,EAAE,MAAM,CAAC;IACd,KAAK,EAAE,SAAS,CAAC;IACjB,OAAO,EAAE,MAAM,EAAE,CAAC;IAClB,YAAY,EAAE,IAAI,CAAC;CACpB"}
